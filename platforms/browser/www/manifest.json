@@ -1,0 +1,11 @@
+{
+  "background_color": "#FFF",
+  "display": "standalone",
+  "name": "Merchant Loyalty",
+  "short_name": "Merchant Loyalty",
+  "version": "com.choyzuniga.merchantloyalty",
+  "description": "Brand new cordova project!",
+  "author": "Apache Cordova Team",
+  "icons": [],
+  "start_url": "index.html"
+}

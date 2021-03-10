@@ -1,0 +1,56 @@
+{
+  "_from": "cordova-plugin-darkmode",
+  "_id": "cordova-plugin-darkmode@1.0.0",
+  "_inBundle": false,
+  "_integrity": "sha512-v6ecBTCBD2oTTiEN9nIasb0+g02Em9NZqVnQGrHf1T721W3azIJOk1R8Jd+dw3Wkg0E+kp9wSbjFSOktLRZBcw==",
+  "_location": "/cordova-plugin-darkmode",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "tag",
+    "registry": true,
+    "raw": "cordova-plugin-darkmode",
+    "name": "cordova-plugin-darkmode",
+    "escapedName": "cordova-plugin-darkmode",
+    "rawSpec": "",
+    "saveSpec": null,
+    "fetchSpec": "latest"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/cordova-plugin-darkmode/-/cordova-plugin-darkmode-1.0.0.tgz",
+  "_shasum": "1d8005829d30b0ae9cd5c235fc2485747c34cc0b",
+  "_spec": "cordova-plugin-darkmode",
+  "_where": "C:\\Users\\PC USER\\Downloads\\merchantmobile\\merchantmobile",
+  "author": {
+    "name": "OpenMove team"
+  },
+  "bugs": {
+    "url": "https://github.com/openmove/cordova-darkmode-plugin"
+  },
+  "bundleDependencies": false,
+  "cordova": {
+    "id": "cordova-plugin-darkmode",
+    "platforms": [
+      "android"
+    ]
+  },
+  "deprecated": false,
+  "description": "A sample for a new cordova plugin to detect dark/inversion color mode",
+  "homepage": "https://openmove.com",
+  "keywords": [
+    "cordova",
+    "plugin",
+    "darkmode",
+    "ecosystem:cordova",
+    "cordova-android"
+  ],
+  "license": "Apache-2",
+  "name": "cordova-plugin-darkmode",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openmove/cordova-darkmode-plugin.git"
+  },
+  "version": "1.0.0"
+}

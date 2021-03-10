@@ -1,0 +1,62 @@
+{
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-app-version": {
+      "PACKAGE_NAME": "com.choyzuniga.merchantloyalty"
+    },
+    "cordova-plugin-appversion": {
+      "PACKAGE_NAME": "com.choyzuniga.merchantloyalty"
+    },
+    "cordova-plugin-call-number": {
+      "PACKAGE_NAME": "com.choyzuniga.merchantloyalty"
+    },
+    "cordova-plugin-camera": {
+      "ANDROID_SUPPORT_V4_VERSION": "27.+",
+      "PACKAGE_NAME": "com.choyzuniga.merchantloyalty"
+    },
+    "cordova-plugin-console": {
+      "PACKAGE_NAME": "com.choyzuniga.merchantloyalty"
+    },
+    "cordova-plugin-darkmode": {
+      "PACKAGE_NAME": "com.choyzuniga.merchantloyalty"
+    },
+    "cordova-plugin-device": {
+      "PACKAGE_NAME": "com.choyzuniga.merchantloyalty"
+    },
+    "cordova-plugin-file": {
+      "PACKAGE_NAME": "com.choyzuniga.merchantloyalty"
+    },
+    "cordova-plugin-file-transfer": {
+      "PACKAGE_NAME": "com.choyzuniga.merchantloyalty"
+    },
+    "cordova-plugin-inappbrowser": {
+      "PACKAGE_NAME": "com.choyzuniga.merchantloyalty"
+    },
+    "cordova-plugin-statusbar": {
+      "PACKAGE_NAME": "com.choyzuniga.merchantloyalty"
+    },
+    "cordova-plugin-uniquedeviceid": {
+      "PACKAGE_NAME": "com.choyzuniga.merchantloyalty"
+    },
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "com.choyzuniga.merchantloyalty"
+    },
+    "cordova-plugin-x-toast": {
+      "PACKAGE_NAME": "com.choyzuniga.merchantloyalty"
+    },
+    "cordova-sqlite-storage": {
+      "PACKAGE_NAME": "com.choyzuniga.merchantloyalty"
+    },
+    "phonegap-plugin-barcodescanner": {
+      "ANDROID_SUPPORT_V4_VERSION": "27.+",
+      "PACKAGE_NAME": "com.choyzuniga.merchantloyalty"
+    }
+  },
+  "dependent_plugins": {}
+}
