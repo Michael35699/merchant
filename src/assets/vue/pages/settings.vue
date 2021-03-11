@@ -30,7 +30,7 @@
               selected>{{ branch }}</option
             >
             <option
-              v-for="{ brand, brand_id, branch } in branches.filter(
+              v-for="{ brand_id, branch } in branches.filter(
                 x => x.brand_id !== branchID
               )"
               :key="brand_id"
