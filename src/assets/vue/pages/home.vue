@@ -67,7 +67,10 @@
 
     <f7-block-title class="searchbar-found">Rewards</f7-block-title>
     <f7-list class="components-list searchbar-found">
-      <f7-list-item link="/redemption/" title="Redemption" panel-close>
+      <f7-list-item link="/redeemitems/" title="Redeem Items" panel-close>
+        <f7-icon slot="media" f7="gift_fill"></f7-icon>
+      </f7-list-item>
+      <f7-list-item link="/redeemcoupon/" title="Redeem Coupon" panel-close>
         <f7-icon slot="media" f7="gift_fill"></f7-icon>
       </f7-list-item>
       <f7-list-item link="/verifycoupon/" title="Verify Coupon" panel-close>
