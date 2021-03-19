@@ -88,9 +88,10 @@ e-center[data-v-23097c7e] {
   text-overflow: clip;
 }
 .title-number[data-v-23097c7e] {
-  border-top: 24px;
   font-size: 32px;
-  margin-top: 10%;
+}
+.desc-subtitle[data-v-23097c7e] {
+  font-size: 12px;
 }
 .whole-body[data-v-23097c7e] {
   height: 100%;
@@ -113,7 +114,22 @@ e-center[data-v-23097c7e] {
   text-align: center;
   font-size: 24px;
 }
-.flex-column[data-v-23097c7e] {
+.scan-button[data-v-23097c7e] {
+  --width: 200px;
+  --height: 200px;
+
+  width: var(--width);
+  height: var(--height);
+  position: absolute;
+  left: 50%;
+  margin-left: calc(var(--width) / -2);
+  top: 50%;
+  margin-top: calc(var(--height) / -2);
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.description-text[data-v-23097c7e] {
+  margin-left: 12px;
+  margin-right: 12px;
 }

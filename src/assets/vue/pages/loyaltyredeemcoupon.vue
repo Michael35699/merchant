@@ -1,14 +1,12 @@
 <template>
   <f7-page>
-    <f7-navbar title="Rewards Redemption" back-link="this.$f7router.navigate('/r')"></f7-navbar>
+    <f7-navbar title="Coupon Redemption" back-link="this.$f7router.navigate('/r')"></f7-navbar>
     <div v-if="scanned">
       <f7-block-title>Convert Moments</f7-block-title>
-      <div class="center-flex flex-column">
-        <div class="title-number">
-          {{ redeemValue.addCommas() }} to ₱
-          {{ (redeemValue / conversionRate).addCommas() }}
-        </div>
-        <div>You have {{ pointsAvailable }} moments.</div>
+      <div class="center-flex flex-direction-column">
+        <div class="title-number">₱ {{ (redeemValue / conversionRate).addCommas() }}</div>
+        <div class="desc-subtitle">You have {{ pointsAvailable }} moments.</div>
+        <div class="desc-subtitle">This will take {{ redeemValue.addCommas() }} moments.</div>
       </div>
 
       <f7-block-title>Cardholder Details</f7-block-title>
@@ -67,17 +65,20 @@
         </f7-row>
       </f7-block-title>
     </div>
-    <div v-else class="whole-body center-flex flex-column">
-      <p>
+    <!-- <div v-else class="whole-body center-flex flex-direction-column"> -->
+    <div v-else class="whole-body">
+      <p class="description-text">
         Scan coupon's QR code to retrieve redemption details and proceed with the
         transaction.
       </p>
-      <div
-        class="content-block justify-content-center align-items-center text-align-center"
-        @click="scanCard"
-      >
-        <f7-icon f7="qrcode_viewfinder" size="40px"></f7-icon>
-        <p>Scan Card</p>
+      <div class="scan-button">
+        <div
+          class="content-block justify-content-center align-items-center text-align-center"
+          @click="scanCard"
+        >
+          <f7-icon f7="qrcode_viewfinder" size="40px"></f7-icon>
+          <p>Scan Card</p>
+        </div>
       </div>
     </div>
   </f7-page>
@@ -101,15 +102,15 @@ export default {
     redeemValue: 0,
 
     // FIXME: These should be replaced before production
-    pointsAvailable: 0,
-    scanned: false,
-    eligible: false,
+    pointsAvailable: 2800,
+    scanned: true,
+    eligible: true,
 
     // NOTE: These can be replaced
     step: 500,
     minValue: 0,
     maxValue: 10000,
-    conversionRate: 2 / 1 /* POINTS PER PESO */,
+    conversionRate: 1 / 1 /* POINTS PER PESO */,
   }),
   methods: {
     scanCard() {
@@ -293,9 +294,11 @@ e-center {
 }
 
 .title-number {
-  border-top: 24px;
   font-size: 32px;
-  margin-top: 10%;
+}
+
+.desc-subtitle {
+  font-size: 12px;
 }
 
 .whole-body {
@@ -324,8 +327,24 @@ e-center {
   font-size: 24px;
 }
 
-.flex-column {
+.scan-button {
+  --width: 200px;
+  --height: 200px;
+
+  width: var(--width);
+  height: var(--height);
+  position: absolute;
+  left: 50%;
+  margin-left: calc(var(--width) / -2);
+  top: 50%;
+  margin-top: calc(var(--height) / -2);
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.description-text {
+  margin-left: 12px;
+  margin-right: 12px;
 }
 </style>
