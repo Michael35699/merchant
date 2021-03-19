@@ -1,36 +1,23 @@
 <template>
   <f7-page>
-    <f7-navbar
-      title="Rewards Redemption"
-      back-link="this.$f7router.navigate('/r')"
-    ></f7-navbar>
-    <p>
-      Scan coupon's QR code to retrieve redemption details and proceed with the
-      transaction.
-    </p>
+    <f7-navbar title="Rewards Redemption" back-link="this.$f7router.navigate('/r')"></f7-navbar>
+    <div v-if="scanned">
+      <f7-block-title>Convert Moments</f7-block-title>
+      <div class="center-flex flex-column">
+        <div class="title-number">
+          {{ redeemValue.addCommas() }} to ₱
+          {{ (redeemValue / conversionRate).addCommas() }}
+        </div>
+        <div>You have {{ pointsAvailable }} moments.</div>
+      </div>
 
-    <div
-      class="content-block justify-content-center align-items-center text-align-center"
-      v-on:click="scanCoupon"
-    >
-      <f7-icon f7="qrcode_viewfinder" size="40px"></f7-icon>
-      <p>Scan Coupon</p>
-    </div>
-
-    <div toHide v-if="scanned">
-      <f7-block-title>Item Details</f7-block-title>
-      <f7-list>
-        <f7-list-item header="Item" :title="itemForRedemption">
-          <f7-icon slot="media" f7="cart_fill"></f7-icon>
-        </f7-list-item>
-        <f7-list-item header="Active Moments Required" :title="pointsRequired">
-          <f7-icon slot="media" f7="cart_fill_badge_plus"></f7-icon>
-        </f7-list-item>
-      </f7-list>
       <f7-block-title>Cardholder Details</f7-block-title>
       <f7-list>
         <f7-list-item header="Name" :title="name">
           <f7-icon slot="media" f7="person_crop_rectangle_fill"></f7-icon>
+        </f7-list-item>
+        <f7-list-item header="Membership Tier" :title="memberLevel">
+          <f7-icon slot="media" f7="creditcard_fill"></f7-icon>
         </f7-list-item>
         <f7-list-item header="Card Number" :title="cardNumber">
           <f7-icon slot="media" f7="creditcard_fill"></f7-icon>
@@ -40,43 +27,92 @@
         </f7-list-item>
         <f7-list-item
           header="Active Moments (may include additional free Moments)"
-          :title="pointsAvailable"
+          :title="pointsAvailable.addCommas()"
         >
           <f7-icon slot="media" f7="gift_alt_fill"></f7-icon>
         </f7-list-item>
       </f7-list>
 
-      <f7-block
-        class="justify-content-center align-items-center text-align-center"
-      >
+      <div class="button-bar">
+        <f7-row class="inner-button-bar">
+          <f7-col>
+            <f7-button
+              noclip
+              outline
+              icon-f7="minus"
+              @click="decrement"
+              :disabled="redeemValue <= minValue"
+            ></f7-button>
+          </f7-col>
+          <f7-col class="increment-number">500</f7-col>
+          <f7-col>
+            <f7-button
+              noclip
+              outline
+              icon-f7="plus"
+              @click="increment"
+              :disabled="cannotIncrease()"
+            ></f7-button>
+          </f7-col>
+        </f7-row>
+      </div>
+
+      <f7-block-title class="justify-content-center align-items-center text-align-center">
         <f7-row>
           <f7-col></f7-col>
           <f7-col>
-            <f7-button raised fill round v-on:click="processRedemption"
-              >Redeem Item</f7-button
-            >
+            <f7-button raised fill round @click="processRedemption">Redeem</f7-button>
           </f7-col>
           <f7-col></f7-col>
         </f7-row>
-      </f7-block>
+      </f7-block-title>
+    </div>
+    <div v-else class="whole-body center-flex flex-column">
+      <p>
+        Scan coupon's QR code to retrieve redemption details and proceed with the
+        transaction.
+      </p>
+      <div
+        class="content-block justify-content-center align-items-center text-align-center"
+        @click="scanCard"
+      >
+        <f7-icon f7="qrcode_viewfinder" size="40px"></f7-icon>
+        <p>Scan Card</p>
+      </div>
     </div>
   </f7-page>
 </template>
+
 <script>
+Number.prototype.addCommas = function () {
+  return this.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
 export default {
   components: {},
   data: () => ({
-    voucher: "",
-    itemForRedemption: "",
-    pointsRequired: "",
-    cardNumber: "",
+    // NOTE: Default values for initialization, do not change
     name: "",
+    voucher: "",
     cardExpiry: "",
-    pointsAvailable: "",
-    scanned: false
+    cardNumber: "",
+    memberLevel: "",
+    orFileName: "",
+    redeemValue: 0,
+
+    // FIXME: These should be replaced before production
+    pointsAvailable: 0,
+    scanned: false,
+    eligible: false,
+
+    // NOTE: These can be replaced
+    step: 500,
+    minValue: 0,
+    maxValue: 10000,
+    conversionRate: 2 / 1 /* POINTS PER PESO */,
   }),
   methods: {
-    scanCoupon() {
+    scanCard() {
       this.clearFields();
       const options = {
         preferFrontCamera: false, // iOS and Android
@@ -89,51 +125,55 @@ export default {
         formats: "QR_CODE,PDF_417", // default: all but PDF_417 and RSS_EXPANDED
         orientation: "portrait", // Android only (portrait|landscape), default unset so it rotates with the device
         disableAnimations: true, // iOS
-        disableSuccessBeep: false // iOS and Android
+        disableSuccessBeep: false, // iOS and Android
       };
-      const { barcodeSuccess: success, barcodeError: error } = this;
-      cordova.plugins.barcodeScanner.scan(success, error, options);
+
+      cordova.plugins.barcodeScanner.scan(
+        this.barcodeSuccess,
+        this.barcodeError,
+        options
+      );
     },
     barcodeSuccess(result) {
       console.log(result.text);
       this.clearFields();
-      if (result.text !== "") {
-        this.$data.voucher = result.text;
+
+      if (result.text.trim().length > 0) {
+        this.voucher = result.text;
         this.verifyCoupon(result.text);
       }
     },
-    barcodeError() {
-      this.$data.orFileName = "";
+    barcodeError(error) {
+      this.orFileName = "";
       alert("Scanning failed: " + error);
     },
     clearFields() {
-      this.voucher = "";
-      this.itemForRedemption = "";
-      this.pointsRequired = "";
       this.name = "";
+      this.voucher = "";
+      this.scanned = false;
       this.cardNumber = "";
       this.cardExpiry = "";
+      this.memberLevel = "";
+      this.elligible = false;
       this.pointsAvailable = "";
-      this.scanned = false;
     },
     processRedemption() {
       const { brand, branch, url } = this.$store.getters;
 
       this.$f7.dialog.preloader("Processing item for redemption");
-      const verRdParam = { brand: "", voucher: "", deviceID: "" };
-      verRdParam.brand = brand;
-      verRdParam.branch = branch;
-      verRdParam.voucher = this.$data.voucher;
-      verRdParam.deviceID = device.uuid;
+      const verRdParam = JSON.stringify({
+        brand: brand,
+        branch: branch,
+        voucher: this.voucher,
+        deviceID: device.uuid,
+      });
 
-      const baseURI = `${url}/moment/php/terminalredemption.php?param=${JSON.stringify(
-        verRdParam
-      )}`;
+      const baseURI = `${url}/moment/php/terminalredemption.php?param=${verRdParam}`;
       console.log(`verifyCoupon: (URI) : ${baseURI}`);
 
       fetch(baseURI)
-        .then(result => result.json())
-        .then(result => {
+        .then((result) => result.json())
+        .then((result) => {
           const { message, errorno } = result;
           console.log(result);
           console.log("verifyCoupon (Error No):" + errorno);
@@ -144,7 +184,7 @@ export default {
           }
           this.clearFields();
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
           this.$f7.dialog.alert(
             "Unable to perform card purchase. Please contact support",
@@ -158,38 +198,45 @@ export default {
     verifyCoupon(coupon) {
       const { brand, url } = this.$store.getters;
       this.$f7.dialog.preloader("Verifying coupon");
-      const verRdParam = { brand, voucher: coupon, deviceID: device.uuid };
 
-      const param = JSON.stringify(verRdParam);
+      const param = JSON.stringify({
+        brand: brand,
+        voucher: coupon,
+        deviceID: device.uuid,
+      });
       const baseURI = `${url}/moment/php/terminalverifyredemptionv2.php?param=${param}`;
       console.log(`verifyCoupon: (URI) : ${baseURI}`);
 
       fetch(baseURI)
-        .then(result => result.json())
-        .then(result => {
-          const _data = this.$data;
+        .then((result) => result.json())
+        .then((result) => {
           const { errorno, message, data } = result;
 
           console.log("verifyCoupon (Error No):" + errorno);
           if (parseInt(errorno) === 0) {
-            const [DATA] = data;
-            const { Item, PointsRedeemed, Name } = DATA;
-            const { MemberCardNumber, CardExpiry, PointsAvailable } = DATA;
+            const {
+              Name: name,
+              CardExpiry: cardExpiry,
+              PointsAvailable: pointsAvailable,
+              MemberCardNumber: memberCardNumber,
 
-            _data.itemForRedemption = Item;
-            _data.pointsRequired = PointsRedeemed;
-            _data.name = Name;
-            _data.cardNumber = MemberCardNumber;
-            _data.cardExpiry = CardExpiry;
-            _data.pointsAvailable = PointsAvailable;
+              // REVIEW: Check this variable after backend is opened
+              MemberLevel: memberLevel,
+            } = data[0];
 
-            _data.scanned = true;
+            // REVIEW: Add memberLevel
+            this.memberLevel = memberLevel;
+            this.name = name;
+            this.cardNumber = memberCardNumber;
+            this.cardExpiry = cardExpiry;
+            this.pointsAvailable = pointsAvailable;
+            this.scanned = true;
           } else {
             this.$f7.dialog.alert(message, "Warning");
             this.clearFields();
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
           this.$f7.dialog.alert(
             "Unable to perform card purchase. Please contact support",
@@ -199,7 +246,86 @@ export default {
         .finally(() => {
           this.$f7.dialog.close();
         });
-    }
-  }
+    },
+    increment() {
+      /**
+       * Declare @min as this.minVal
+       * Declare @max as this.maxValue
+       * Declare @val as this.redeemValue
+       * Declare @step as this.step
+       */
+      const { minValue: min, maxValue: max, redeemValue: val, step } = this;
+
+      /// (min a (max b x)) ensures that a < x < b
+      this.redeemValue = Math.max(min, Math.min(max, val + step));
+    },
+    decrement() {
+      const { minValue: min, maxValue: max, redeemValue: val, step } = this;
+
+      this.redeemValue = Math.max(min, Math.min(max, val - step));
+    },
+    /**
+     * Returns a @boolean determining whether the value can still be increased.
+     *
+     * Condition @isAboveMaximum shows if the @redeemValue is greater than the maximum
+     * Condition @nextIsAvailable shows whether @redeemValuecan be increased without
+     *   going out of bounds from the available points
+     */
+    cannotIncrease() {
+      const { step, maxValue, pointsAvailable, redeemValue } = this;
+
+      const isAboveMaximum = redeemValue >= maxValue;
+      const nextIsAvailable = pointsAvailable < redeemValue + step;
+
+      return isAboveMaximum || nextIsAvailable;
+    },
+  },
 };
 </script>
+
+<style scoped>
+e-center {
+  text-align: center;
+}
+
+[noclip] {
+  text-overflow: clip;
+}
+
+.title-number {
+  border-top: 24px;
+  font-size: 32px;
+  margin-top: 10%;
+}
+
+.whole-body {
+  height: 100%;
+  width: 100%;
+}
+
+.center-flex {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-bar {
+  border-top: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.inner-button-bar {
+  width: 80%;
+}
+
+.increment-number {
+  text-align: center;
+  font-size: 24px;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+</style>
