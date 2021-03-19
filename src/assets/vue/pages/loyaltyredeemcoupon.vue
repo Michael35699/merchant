@@ -5,7 +5,7 @@
       <f7-block-title>Convert Moments</f7-block-title>
       <div class="center-flex flex-direction-column">
         <div class="title-number">₱ {{ (redeemValue / conversionRate).addCommas() }}</div>
-        <div class="desc-subtitle">You have {{ pointsAvailable }} moments.</div>
+        <div class="desc-subtitle">You have {{ pointsAvailable.addCommas() }} moments.</div>
         <div class="desc-subtitle">This will take {{ redeemValue.addCommas() }} moments.</div>
       </div>
 
@@ -102,9 +102,9 @@ export default {
     redeemValue: 0,
 
     // FIXME: These should be replaced before production
-    pointsAvailable: 2800,
-    scanned: true,
-    eligible: true,
+    pointsAvailable: 0,
+    scanned: false,
+    eligible: false,
 
     // NOTE: These can be replaced
     step: 500,
