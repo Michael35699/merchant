@@ -2,11 +2,7 @@
   <f7-page>
     <f7-navbar>
       <f7-nav-left>
-        <f7-link
-          class="panel-open"
-          open-panel="left"
-          icon="fas fa-bars"
-        ></f7-link>
+        <f7-link class="panel-open" open-panel="left" icon="fas fa-bars"></f7-link>
       </f7-nav-left>
       <div class="title">Moment card</div>
       <f7-nav-right>
@@ -45,12 +41,7 @@
         <f7-icon slot="media" f7="rectangle_stack_person_crop_fill"></f7-icon>
         <!-- icon="fas fa-battery-empty fa-fw" -->
       </f7-list-item>
-      <f7-list-item
-        external
-        link="https://momentcard.ph"
-        title="Registration"
-        panel-close
-      >
+      <f7-list-item external link="https://momentcard.ph" title="Registration" panel-close>
         <f7-icon slot="media" f7="doc_text_fill"></f7-icon>
         <!-- icon="fas fa-battery-empty fa-fw" -->
       </f7-list-item>
@@ -86,11 +77,7 @@
       <!--f7-list-item title="Dashboard" external link="./index.html?theme=ios"></f7-list-item>
       <f7-list-item title="Reedem" external link="./index.html?theme=md"></f7-list-item>
       <f7-list-item title="How it works" external link="https://momentcard.ph"></f7-list-item!-->
-      <f7-list-item
-        v-on:click="callSupport"
-        title="Call Technical Support"
-        panel-close
-      >
+      <f7-list-item v-on:click="callSupport" title="Call Technical Support" panel-close>
         <f7-icon slot="media" f7="phone_arrow_down_left"></f7-icon>
         <!-- icon="fas phone_fill_arrow_up_right fa-fw" -->
       </f7-list-item>
@@ -117,7 +104,7 @@ export default {
     },
     onError(res) {
       console.log(`Error: ${res}`);
-    }
+    },
   },
   mounted() {
     const { appMode } = this.$data;
@@ -125,7 +112,7 @@ export default {
     console.log(`home.mounted: data=${appMode}`);
     getTerminalConfig(this);
 
-    const defExit = e => {
+    const defExit = (e) => {
       e.preventDefault();
 
       if (this.$f7router.history.length < 2) {
@@ -134,7 +121,7 @@ export default {
         this.$f7router.back();
       }
     };
-    const defBack = e => {
+    const defBack = (e) => {
       e.preventDefault();
       if (this.$f7router.history.length < 2) {
         document.removeEventListener("backbutton", defBack);
@@ -144,7 +131,7 @@ export default {
           message: "Press again to exit.",
           duration: "short", // which is 2000 ms. "long" is 4000. Or specify the nr of ms yourself.
           position: "bottom",
-          addPixelsY: -40 // added a negative value to move it up a bit (default 0)
+          addPixelsY: -40, // added a negative value to move it up a bit (default 0)
         });
 
         setTimeout(() => {
@@ -157,6 +144,6 @@ export default {
     };
 
     document.addEventListener("backbutton", defBack);
-  }
+  },
 };
 </script>
