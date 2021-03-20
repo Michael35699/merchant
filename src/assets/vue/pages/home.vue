@@ -25,7 +25,7 @@
     </f7-block>
     <f7-block-title class="searchbar-found">Moments</f7-block-title>
     <f7-list class="components-list searchbar-found">
-      <f7-list-item link="/purchase/" title="Purchase" panel-close>
+      <f7-list-item link="/purchase/" title="Purchase Card" panel-close>
         <f7-icon slot="media" f7="creditcard_fill"></f7-icon>
         <!-- icon="fas fa-id-card-alt fa-fw" -->
       </f7-list-item>
