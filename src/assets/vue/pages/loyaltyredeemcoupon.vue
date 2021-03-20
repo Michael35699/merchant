@@ -85,10 +85,6 @@
 </template>
 
 <script>
-Number.prototype.addCommas = function () {
-  return this.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-};
-
 export default {
   components: {},
   data: () => ({

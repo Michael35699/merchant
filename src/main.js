@@ -37,6 +37,10 @@ import store from "./assets/vuex/storage.js";
 import { initTerminalDatabase } from "./assets/js/terminal";
 import RangeComponent from "framework7/components/range/range";
 
+Number.prototype.addCommas = function () {
+  return this.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
 // Different F7-Vue plugin initialization with f7 v3.0
 Framework7.use(Framework7Vue);
 // Init Vue App
