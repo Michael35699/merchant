@@ -1,9 +1,6 @@
 <template>
   <f7-page>
-    <f7-navbar
-      title="Renew moment card"
-      back-link="this.$f7router.navigate('/r')"
-    ></f7-navbar>
+    <f7-navbar title="Renew moment card" back-link="this.$f7router.navigate('/r')"></f7-navbar>
     <p>Only active cards are renewable.</p>
     <div
       class="content-block justify-content-center align-items-center text-align-center"
@@ -42,16 +39,8 @@
             placeholder="Your Name"
           />
         </f7-list-item>
-        <f7-list-item
-          title="Payment Type"
-          smart-select
-          :smart-select-params="{ openIn: 'sheet' }"
-        >
-          <select
-            name="payment_type"
-            v-model="paymentType"
-            @change="$f7.smartSelect.close()"
-          >
+        <f7-list-item title="Payment Type" smart-select :smart-select-params="{ openIn: 'sheet' }">
+          <select name="payment_type" v-model="paymentType" @change="$f7.smartSelect.close()">
             <option value="Cash">Cash</option>
             <option value="Card">Card</option>
           </select>
@@ -75,15 +64,11 @@
         <p>Capture Receipt</p>
       </div>
 
-      <f7-block
-        class="justify-content-center align-items-center text-align-center"
-      >
+      <f7-block class="justify-content-center align-items-center text-align-center">
         <f7-row>
           <f7-col></f7-col>
           <f7-col>
-            <f7-button raised fill round v-on:click="processRenewal"
-              >Renew Card</f7-button
-            >
+            <f7-button raised fill round v-on:click="processRenewal">Renew Card</f7-button>
           </f7-col>
           <f7-col></f7-col>
         </f7-row>
@@ -92,8 +77,6 @@
   </f7-page>
 </template>
 <script>
-import axios from "axios";
-
 export default {
   components: {},
   data: () => ({
@@ -105,7 +88,7 @@ export default {
     orImage: null,
     orFileName: "",
     renewalCount: 0,
-    scanned: false
+    scanned: false,
   }),
   methods: {
     scanCard() {
@@ -120,7 +103,7 @@ export default {
         formats: "QR_CODE,PDF_417", // default: all but PDF_417 and RSS_EXPANDED
         orientation: "portrait", // Android only (portrait|landscape), default unset so it rotates with the device
         disableAnimations: true, // iOS
-        disableSuccessBeep: false // iOS and Android
+        disableSuccessBeep: false, // iOS and Android
       };
       const { barcodeSuccess: success, barcodeError: error } = this;
       cordova.plugins.barcodeScanner.scan(success, error, options);
@@ -145,17 +128,29 @@ export default {
         destinatinationType: Camera.DestinationType.FILE_URI,
         sourceType: Camera.PictureSourceType.CAMERA,
         correctOrientation: true,
-        cameraDirection: navigator.camera.Direction.BACK
+        cameraDirection: navigator.camera.Direction.BACK,
       };
 
       const { cameraSuccess: success, cameraError: error } = this;
       navigator.camera.getPicture(success, error, options);
     },
+    getDate() {
+      const now = new Date();
+
+      const month = (now.getMonth() + 1).toString();
+      const year = now.getFullYear().toString();
+
+      const formattedMonth = month.length < 2 ? `0${month}` : month;
+      const formattedYear = year.substr(-2);
+
+      return `${formattedMonth}${formattedYear}`;
+    },
     cameraSuccess(imgData) {
       const { brand, branch } = this.$store.getters;
-      const { cardNumber, renewalCount } = this.$data;
-      this.$data.orImage = imgData;
-      this.$data.orFileName = `Renewal_${brand}_${branch}_${cardNumber}_${renewalCount}.jpg`;
+      const { cardNumber, renewalCount } = this;
+
+      this.orImage = imgData;
+      this.orFileName = `Renewal_${brand}_${branch}_${cardNumber}_${renewalCount}_${this.getDate()}.jpg`;
     },
     cameraError() {},
     /**
@@ -174,10 +169,10 @@ export default {
         orNumber,
         cashierName,
         paymentType,
-        orFileName
+        orFileName,
       ];
 
-      if (checks.some(x => x === "") || this.$store.getters.branchID === "") {
+      if (checks.some((x) => x === "") || this.$store.getters.branchID === "") {
         this.$f7.dialog.alert("All fields are mandatory", "Warning");
         return;
       }
@@ -206,16 +201,19 @@ export default {
       this.$f7.dialog.alert("Error uploading receipt. Please try again.");
     },
     deleteImageFile() {
-      window.resolveLocalFileSystemURL(this.$data.orImage, function(fileEntry) {
-        fileEntry.remove(
-          function() {
-            console.log("File is removed.");
-          },
-          function(error) {
-            console.log("Unable to remove file.");
-          }
-        );
-      });
+      window.resolveLocalFileSystemURL(
+        this.$data.orImage,
+        function (fileEntry) {
+          fileEntry.remove(
+            function () {
+              console.log("File is removed.");
+            },
+            function (error) {
+              console.log("Unable to remove file.");
+            }
+          );
+        }
+      );
     },
     clearFields() {
       this.cardNumber = "";
@@ -240,7 +238,7 @@ export default {
         TypeOfPurchase: purchaseType,
         Renewal: 1,
         BranchID: this.$store.getters.branchID,
-        deviceID: device.uuid
+        deviceID: device.uuid,
       };
 
       const stringedParam = JSON.stringify(cardPurchaseParam);
@@ -248,8 +246,8 @@ export default {
       console.log("purchaseCard: (URI) : " + baseURI);
 
       fetch(baseURI)
-        .then(result => result.json())
-        .then(result => {
+        .then((result) => result.json())
+        .then((result) => {
           const { message, errorno } = result;
           console.log("purchaseCard:" + errorno);
 
@@ -262,7 +260,7 @@ export default {
             this.$f7.dialog.alert(message, "Warning");
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
           this.$f7.dialog.alert(
             "Unable to perform card purchase. Please contact support",
@@ -284,8 +282,8 @@ export default {
       console.log("purchaseCard: (URI) : " + baseURI);
 
       fetch(baseURI)
-        .then(k => k.json())
-        .then(result => {
+        .then((k) => k.json())
+        .then((result) => {
           const { errorno, data, message } = result;
 
           console.log(result);
@@ -311,7 +309,7 @@ export default {
             _data.cardNumber = "";
           }
         })
-        .catch(error => {
+        .catch((error) => {
           console.log(error);
           _dialog.alert(
             "Unable to perform card purchase. Please contact support",
@@ -321,7 +319,7 @@ export default {
         .finally(() => {
           _dialog.close();
         });
-    }
-  }
+    },
+  },
 };
 </script>
