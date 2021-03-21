@@ -114,40 +114,40 @@
   margin-left: calc(var(--width) / -2);
 }
 
-e-center[data-v-23097c7e] {
+e-center[data-v-16aa1ffe] {
   text-align: center;
 }
-[noclip][data-v-23097c7e] {
+[noclip][data-v-16aa1ffe] {
   text-overflow: clip;
 }
-.title-number[data-v-23097c7e] {
+.title-number[data-v-16aa1ffe] {
   font-size: 32px;
 }
-.desc-subtitle[data-v-23097c7e] {
+.desc-subtitle[data-v-16aa1ffe] {
   font-size: 12px;
 }
-.whole-body[data-v-23097c7e] {
+.whole-body[data-v-16aa1ffe] {
   height: 100%;
   width: 100%;
 }
-.center-flex[data-v-23097c7e] {
+.center-flex[data-v-16aa1ffe] {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.button-bar[data-v-23097c7e] {
+.button-bar[data-v-16aa1ffe] {
   border-top: 24px;
   display: flex;
   justify-content: center;
 }
-.inner-button-bar[data-v-23097c7e] {
+.inner-button-bar[data-v-16aa1ffe] {
   width: 80%;
 }
-.increment-number[data-v-23097c7e] {
+.increment-number[data-v-16aa1ffe] {
   text-align: center;
   font-size: 24px;
 }
-.scan-button[data-v-23097c7e] {
+.scan-button[data-v-16aa1ffe] {
   --width: 200px;
   --height: 200px;
 
@@ -162,7 +162,7 @@ e-center[data-v-23097c7e] {
   justify-content: center;
   align-items: center;
 }
-.description-text[data-v-23097c7e] {
+.description-text[data-v-16aa1ffe] {
   margin-left: 12px;
   margin-right: 12px;
 }
