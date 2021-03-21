@@ -1,6 +1,6 @@
 <template>
   <f7-page>
-    <f7-navbar title="Coupon Redemption" back-link="this.$f7router.navigate('/r')"></f7-navbar>
+    <f7-navbar title="Point Redemption" back-link="this.$f7router.navigate('/r')"></f7-navbar>
     <div v-if="scanned">
       <f7-block-title>Convert Moments</f7-block-title>
       <div class="center-flex flex-direction-column">
@@ -90,17 +90,17 @@ export default {
   data: () => ({
     // NOTE: Default values for initialization, do not change
     name: "",
-    voucher: "",
     cardExpiry: "",
     cardNumber: "",
     memberLevel: "",
-    orFileName: "",
-    redeemValue: 0,
+    pointsAvailable: 0,
 
     // FIXME: These should be replaced before production
-    pointsAvailable: 0,
     scanned: false,
     eligible: false,
+
+    // NOTE: Mutable state
+    redeemValue: 0,
 
     // NOTE: These can be replaced
     step: 500,
@@ -136,17 +136,15 @@ export default {
       this.clearFields();
 
       if (result.text.trim().length > 0) {
-        this.voucher = result.text;
-        this.verifyCoupon(result.text);
+        // this.voucher = result.text;
+        this.verifyCard(result.text);
       }
     },
     barcodeError(error) {
-      this.orFileName = "";
       alert("Scanning failed: " + error);
     },
     clearFields() {
       this.name = "";
-      this.voucher = "";
       this.scanned = false;
       this.cardNumber = "";
       this.cardExpiry = "";
@@ -155,42 +153,40 @@ export default {
       this.pointsAvailable = "";
     },
     processRedemption() {
-      const { brand, branch, url } = this.$store.getters;
-
-      this.$f7.dialog.preloader("Processing item for redemption");
-      const verRdParam = JSON.stringify({
-        brand: brand,
-        branch: branch,
-        voucher: this.voucher,
-        deviceID: device.uuid,
-      });
-
-      const baseURI = `${url}/moment/php/terminalredemption.php?param=${verRdParam}`;
-      console.log(`verifyCoupon: (URI) : ${baseURI}`);
-
-      fetch(baseURI)
-        .then((result) => result.json())
-        .then((result) => {
-          const { message, errorno } = result;
-          console.log(result);
-          console.log("verifyCoupon (Error No):" + errorno);
-          if (parseInt(errorno) === 0) {
-            this.$f7.dialog.alert(message, "Congratulations");
-          } else {
-            this.$f7.dialog.alert(message, "Warning");
-          }
-          this.clearFields();
-        })
-        .catch((error) => {
-          console.log(error);
-          this.$f7.dialog.alert(
-            "Unable to perform card purchase. Please contact support",
-            "Warning"
-          );
-        })
-        .finally(() => {
-          this.$f7.dialog.close();
-        });
+      throw Exception();
+      // const { brand, branch, url } = this.$store.getters;
+      // this.$f7.dialog.preloader("Processing item for redemption");
+      // const verRdParam = JSON.stringify({
+      //   brand: brand,
+      //   branch: branch,
+      //   voucher: this.voucher,
+      //   deviceID: device.uuid,
+      // });
+      // const baseURI = `${url}/moment/php/terminalredemption.php?param=${verRdParam}`;
+      // console.log(`verifyCoupon: (URI) : ${baseURI}`);
+      // fetch(baseURI)
+      //   .then((result) => result.json())
+      //   .then((result) => {
+      //     const { message, errorno } = result;
+      //     console.log(result);
+      //     console.log("verifyCoupon (Error No):" + errorno);
+      //     if (parseInt(errorno) === 0) {
+      //       this.$f7.dialog.alert(message, "Congratulations");
+      //     } else {
+      //       this.$f7.dialog.alert(message, "Warning");
+      //     }
+      //     this.clearFields();
+      //   })
+      //   .catch((error) => {
+      //     console.log(error);
+      //     this.$f7.dialog.alert(
+      //       "Unable to perform card purchase. Please contact support",
+      //       "Warning"
+      //     );
+      //   })
+      //   .finally(() => {
+      //     this.$f7.dialog.close();
+      //   });
     },
     verifyCoupon(coupon) {
       const { brand, url } = this.$store.getters;
@@ -201,6 +197,7 @@ export default {
         voucher: coupon,
         deviceID: device.uuid,
       });
+
       const baseURI = `${url}/moment/php/terminalverifyredemptionv2.php?param=${param}`;
       console.log(`verifyCoupon: (URI) : ${baseURI}`);
 
@@ -243,6 +240,55 @@ export default {
         .finally(() => {
           this.$f7.dialog.close();
         });
+    },
+    // ANCHOR: verifyCard(cardNumber)
+    async verifyCard(cardNumber) {
+      const { url } = this.$store.getters;
+
+      const baseURI = `${url}/moment/php/cardverify.php?param=${cardNumber}&type=0`;
+      console.log("purchaseCard: (URI) : " + baseURI);
+
+      try {
+        this.$f7.dialog.preloader("Fetching card");
+
+        const response = await fetch(baseURI);
+        const result = await response.json();
+
+        this.$f7.dialog.close();
+
+        const { errorno, data, message } = result; // result.data to result;
+        if (parseInt(errorno) == 0) {
+          const {
+            FirstName,
+            LastName,
+            MemberLevel,
+            CardExpiry,
+            CardStatus,
+            PointsAvailable,
+          } = data[0];
+
+          console.log(`verifyCard (Status): ${CardStatus}`);
+
+          this.name = `${FirstName} ${LastName}`;
+          this.cardNumber = cardNumber;
+          this.memberLevel = MemberLevel;
+          this.cardExpiry = CardExpiry;
+          this.pointsAvailable = PointsAvailable;
+
+          this.scanned = true;
+        } else {
+          this.$f7.dialog.alert(message, "Warning");
+          this.clearFields();
+        }
+      } catch (error) {
+        console.log(error);
+        this.$f7.dialog.alert(
+          "Unable to perform card purchase. Please contact support",
+          "Warning"
+        );
+      } finally {
+        // this.$f7.dialog.close();
+      }
     },
     increment() {
       /**

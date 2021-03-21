@@ -7,7 +7,7 @@ import LoyaltyRenew from "./assets/vue/pages/loyaltyrenewal.vue";
 import LoyaltyVerify from "./assets/vue/pages/loyaltyverify.vue";
 import LoyaltyVerifyCoupon from "./assets/vue/pages/loyaltyverifycoupon.vue";
 import LoyaltyRedeemItems from "./assets/vue/pages/loyaltyredeemitems.vue";
-import LoyaltyRedeemCoupon from "./assets/vue/pages/loyaltyredeemcoupon.vue";
+import LoyaltyRedeemPoints from "./assets/vue/pages/loyaltyredeempoints.vue";
 import LoyaltyReplacement from "./assets/vue/pages/loyaltyreplacement.vue";
 import DynamicRoutePage from "./assets/vue/pages/dynamic-route.vue";
 import SettingsPage from "./assets/vue/pages/settings.vue";
@@ -43,9 +43,9 @@ export default [
         component: LoyaltyVerifyCoupon
       },
       {
-        name: "redeemcoupon",
-        path: "redeemcoupon/",
-        component: LoyaltyRedeemCoupon
+        name: "redeempoints",
+        path: "redeempoints/",
+        component: LoyaltyRedeemPoints
       },
       {
         name: "redeemitems",
